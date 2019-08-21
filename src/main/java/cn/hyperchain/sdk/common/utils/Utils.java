@@ -21,7 +21,8 @@ public class Utils {
             Security.setProperty("securerandom.strongAlgorithms", "NativePRNGNonBlocking:SUN");
             random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            logger.error(e);
+            random = new SecureRandom();
+           // logger.error(e);
         }
     }
 
