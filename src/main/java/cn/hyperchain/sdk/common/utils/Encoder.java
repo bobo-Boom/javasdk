@@ -50,19 +50,19 @@ public class Encoder {
                 throw new IOException("the contract jar should not be larger than 64KB");
             }
 
-            os = new FileOutputStream(tmpPath);
-            os.write(buffer);
-
-            jar = new JarFile(tmpPath, true);
-
-            if (jar != null && jar.getManifest().getMainAttributes().getValue("Main-Class") == null) {
-                throw new IOException("the path does not point to a contract jar");
-            }
-
-            File file = new File(tmpPath);
-            if (!file.delete()) {
-                throw new IOException("temp file delete failed!");
-            }
+//            os = new FileOutputStream(tmpPath);
+//            os.write(buffer);
+//
+//            jar = new JarFile(tmpPath, true);
+//
+//            if (jar != null && jar.getManifest().getMainAttributes().getValue("Main-Class") == null) {
+//                throw new IOException("the path does not point to a contract jar");
+//            }
+//
+//            File file = new File(tmpPath);
+//            if (!file.delete()) {
+//                throw new IOException("temp file delete failed!");
+//            }
 
             return ByteUtil.toHex(buffer);
         } catch (IOException e ) {
