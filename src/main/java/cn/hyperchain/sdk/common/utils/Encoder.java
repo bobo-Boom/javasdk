@@ -8,16 +8,8 @@ import org.apache.log4j.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.JarURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 public class Encoder {
 
@@ -32,10 +24,6 @@ public class Encoder {
     public static String encodeDeployJar(InputStream fis) {
         BufferedInputStream bis = null;
         ByteArrayOutputStream baos = null;
-        FileOutputStream os = null;
-        JarFile jar = null;
-
-        String tmpPath = Thread.currentThread().getContextClassLoader().getResource("").getPath() + "tmp.jar";
 
         try {
             bis = new BufferedInputStream(fis);
@@ -49,7 +37,6 @@ public class Encoder {
             if (buffer.length > 1024 * 64) {
                 throw new IOException("the contract jar should not be larger than 64KB");
             }
-
 //            os = new FileOutputStream(tmpPath);
 //            os.write(buffer);
 //
@@ -63,9 +50,8 @@ public class Encoder {
 //            if (!file.delete()) {
 //                throw new IOException("temp file delete failed!");
 //            }
-
             return ByteUtil.toHex(buffer);
-        } catch (IOException e ) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
             try {
