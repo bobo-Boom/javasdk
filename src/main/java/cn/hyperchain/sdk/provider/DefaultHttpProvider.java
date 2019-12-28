@@ -117,11 +117,11 @@ public class DefaultHttpProvider implements HttpProvider {
             try {
                 String result = response.body().string();
                 JSONObject jsonObject = com.alibaba.fastjson.JSON.parseObject(result);
-                if (jsonObject.get("jsonrpc") != null && jsonObject.get("code") != null) {
-                    if (!jsonObject.get("code").toString().equals("0")){
-                        throw new RequestException(400,jsonObject.toString());
-                    }
-                }
+//                if (jsonObject.get("jsonrpc") != null && jsonObject.get("code") != null) {
+//                    if (!jsonObject.get("code").toString().equals("0")) {
+//                        throw new RequestException(400,jsonObject.toString());
+//                    }
+//                }
                 if (jsonObject.get("message") != null && jsonObject.get("message").equals("Token is expired")) {
                     logger.info("Token is expired");
                     throw new RequestException(400,"Token is expired");
@@ -129,6 +129,10 @@ public class DefaultHttpProvider implements HttpProvider {
                 if (jsonObject.get("message") != null && jsonObject.get("message").equals("Token Error")) {
                     logger.info("Token Error");
                     throw new RequestException(400,"Token Error");
+                }
+
+                if (jsonObject.get("message") != null && !jsonObject.get("message").equals("Token is expired") && !jsonObject.get("message").equals("Token Error") && jsonObject.get("statusCode") != null && jsonObject.get("statusCode").toString().equals("400")) {
+                    throw new RequestException(400,result);
                 }
                 logger.debug("[RESPONSE] " + result);
                 return result;
