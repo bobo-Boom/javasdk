@@ -17,9 +17,9 @@ import java.util.List;
  * @date 2019-07-08
  */
 public class ArchiveResponse extends Response {
-    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    static Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    private class Archive {
+    public class Archive {
         @Expose
         private String height;
         @Expose
