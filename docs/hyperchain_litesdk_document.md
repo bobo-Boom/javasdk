@@ -255,8 +255,12 @@ public interface AccountService {
     Account fromAccountJson(String accountJson);
 
     Account fromAccountJson(String accountJson, String password);
+    
+    Request<BalanceResponse> getBalance(String address, int... nodeIds);
 }
 ```
+
+前四个接口是用于生成账户，而`getBalance`方法则可以查询该账户所有的余额，需要传一个**合约地址**为参数。
 
 目前Account服务支持的所有加密算法如下：
 
@@ -336,11 +340,26 @@ Transaction transaction = new Transaction.EVMBuilder(account.getAddress()).deplo
 
 ##### HVM
 
+hvm调用合约有两种方式：
+
+- **invoke bean**调用
+- 直接调用合约方法（类似evm）
+
+1. invoke bean调用如下：
+
 ```java
 Transaction transaction = new Transaction.HVMBuilder(account.getAddress()).invoke(receiptResponse.getContractAddress(), invoke).build();
 ```
 
 创建交易体时需要指定**合约地址**和**invoke bean**（HVM中新提出的概念，可点击[该链接](http://hvm.internal.hyperchain.cn/#/)了解）。
+
+2. 直接调用合约方法如下：
+
+```java
+Transaction transaction = new Transaction.HVMBuilder(account.getAddress()).invokeDirectly(receiptResponse.getContractAddress(), params).build();
+```
+
+params类型为`InvokeDirectlyParams`，具体的构造方式见附录。
 
 ##### EVM
 
@@ -480,7 +499,7 @@ public class TxResponse extends Response {
 
 ```java
 public class TxCountWithTSResponse extends Response {
-    private class TxCount {
+    public class TxCount {
         private String count;
         private long timestamp;
     }
@@ -713,23 +732,17 @@ Request<TxResponse> getSignHash(String from, String to, BigInteger nonce, String
 
 - startTime 起起始时间戳(单位ns)。
 - endTime 结束时间戳(单位ns)。
-- limit（可选） 符合条件的区块数目最大值，默认值为50。
 - nodeIds 说明请求向哪些节点发送。
 
 ```java
 Request<TxResponse> getTransactionsByTime(BigInteger startTime, BigInteger endTime, int... nodeIds);
-
-Request<TxResponse> getTransactionsByTime(BigInteger startTime, BigInteger endTime, int limit, int... nodeIds);
 ```
 
 重载方法如下：
 
 ```java
 Request<TxResponse> getTransactionsByTime(String startTime, String endTime, int... nodeIds);
-
-Request<TxResponse> getTransactionsByTime(String startTime, String endTime, int limit, int... nodeIds);
 ```
-
 
 
 ### 4.13 查询指定时间区间内的非法交易(getDiscardTransactionsByTime)
@@ -884,7 +897,7 @@ BlockService接口与TxService相似，只是获取的对象是区块信息。�
 
 ```java
 public class BlockResponse extends Response {
-    private class Block {
+    public class Block {
         private String version;
         private String number;
         private String hash;
@@ -925,7 +938,7 @@ public class BlockAvgTimeResponse extends Response {
 
 ```java
 public class BlockCountResponse extends Response {
-    private class BlockCount {
+    public class BlockCount {
         private String sumOfBlocks;
         private String startBlock;
         private String endBlock;
@@ -1279,7 +1292,7 @@ Request<RadarResponse> listenContract(String sourceCode, String contractAddress,
 
 ```java
 public class ArchiveResponse extends Response {
-    private class Archive {
+    public class Archive {
         private String height;
         private String hash;
         private String filterId;
@@ -1535,3 +1548,80 @@ for (Object result : decodeResult) {
 }
 ```
 
+
+
+### 附录B 直接调用HVM合约方法的参数封装
+
+直接调用HVM合约方法封装参数需要用到类`InvokeDirectlyParams`。
+
+示例如下：
+
+假设调用合约方法`add(int a, int b)`，传入参数（10，100）；
+
+```java
+// 构造函数传入想要调用的方法名
+InvokeDirectlyParams.ParamBuilder params = new InvokeDirectlyParams.ParamBuilder("add");
+// 方法addxxx分别构造不同类型的参数
+params.addint(10);
+params.addint(100);
+InvokeDirectlyParams.params.build();
+```
+
+
+
+### 附录C 平台错误码和对应原因
+
+| **code** | **含义**                                                   |
+| -------- | ---------------------------------------------------------- |
+| 0        | 请求成功                                                   |
+| -32700   | 服务端接收到无效的json。该错误发送于服务器尝试解析json文本 |
+| -32600   | 无效的请求（比如非法的JSON格式）                           |
+| -32601   | 方法不存在或者无效                                         |
+| -32602   | 无效的方法参数                                             |
+| -32000   | Hyperchain内部错误或者空指针或者节点未安装solidity环境     |
+| -32001   | 查询的数据不存在                                           |
+| -32002   | 余额不足                                                   |
+| -32003   | 签名非法                                                   |
+| -32004   | 合约部署出错                                               |
+| -32005   | 合约调用出错                                               |
+| -32006   | 系统繁忙(平台需要处理交易量达到限制)                       |
+| -32007   | 交易重复                                                   |
+| -32008   | 合约操作权限不够                                           |
+| -32009   | 账户不存在                                                 |
+| -32010   | namespace不存在                                            |
+| -32011   | 账本上无区块产生，查询最新区块的时候可能抛出该错误         |
+| -32012   | 订阅不存在                                                 |
+| -32013   | 数据归档、快照相关错误                                     |
+| -32021   | 过时接口                                                   |
+| -32097   | Hypercli用户令牌无效                                       |
+| -32098   | 请求未带cert或者错误cert导致认证失败                       |
+| -32099   | 请求tcert失败                                              |
+|          | 参数错误(指定节点发送时，指定index错误)                    |
+| -9995    | 请求失败(通常是请求体过长)                                 |
+| -9996    | 请求失败(通常是请求消息错误)                               |
+| -9997    | 异步请求失败                                               |
+| -9998    | 请求超时(轮询结束未获得回执)                               |
+| -9999    | 获取平台响应失败                                           |
+
+上述为平台api和sdk接口可能返回的状态码的说明，其中-999x的状态码为sdk对平台返回状态码或网络请求结果的封装，简化上层处理逻辑；其余状态码为平台api接口的原生返回结果。
+
+在通过LiteSDK调用查询接口时，例如查询交易Hash对应的交易回执或者通过区块号查询区块内容时，LiteSDK将不会对查询接口进行交易状态码的封装，返回原生状态码，查询结果即为平台返回结果；当发生网络断连问题导致查询接口无法获得Response时，将返回-999x状态码。
+
+当通过LiteSDK发送交易时，由于平台执行交易为异步执行，通过先返回交易Hash，在通过交易Hash查询回执的方式，所以LiteSDK将发送交易和查询交易回执进行了拆分，一个完整的发送交易并获得回执过程如下：
+
+```java
+Request<TxHashResponse> request = sendTxService.sendTx(transaction);
+TxHashResponse txHashResponse = request.send();
+ReceiptResponse response = txHashResponse.polling();
+```
+
+1. 通过调用`request.send()`将交易发送到链上，
+   1. 返回状态码为0并获取交易Hash表示交易已成功上链
+   2. 当出现-9995或者-9996时表示请求返送失败，交易未上链
+   3. **当出现-9999时表示网络出现断连，此时无法确定是交易还未发送成功还是获取Response时出现错误，不明确错误原因**
+   4. 其余情况均为平台返回交易上链失败错误，交易未上链
+
+2. 通过调用`txHashResponse.polling()`可以 通过交易Hash获取交易回执：
+   1. 返回状态码为0时表示查找回执成功，交易执行成功
+   2. **由于轮询查找回执时可能平台尚未完成交易执行(-32001)、平台达到流量限制(-32006)或网络抖动(-9996,-9999)等原因，轮询过程将持续到轮询次数结束，此时若任未获取到回执，将抛出-9998的错误，此时表示轮询查询回执不成功，可能平台尚未执行完该笔交易，不明确错误原因**
+   3. 其余情况下轮询获取到回执均表示查找回执成功，但交易执行失败，成为非法交易

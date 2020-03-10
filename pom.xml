@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <litesdk.version>10.0.2</litesdk.version>
+        <litesdk.version>10.0.9</litesdk.version>
         <maven.checkstyle.version>3.0.0</maven.checkstyle.version>
         <maven.javadoc.version>2.9.1</maven.javadoc.version>
 
@@ -219,7 +219,7 @@
         <dependency>
             <groupId>cn.hyperchain</groupId>
             <artifactId>hvm-sdk</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.8</version>
         </dependency>
 
         <dependency>
@@ -249,19 +249,33 @@
             <version>3.8.1</version>
         </dependency>
 
-        <!-- ignore when deploy -->
-        <!-- test hvm jar -->
         <dependency>
-            <groupId>com.hvm</groupId>
-            <artifactId>contract</artifactId>
-            <scope>test</scope>
-            <version>1.0.0</version>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.58</version>
+            <groupId>com.google.api.grpc</groupId>
+            <artifactId>proto-google-common-protos</artifactId>
+            <version>1.17.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>7.1</version>
         </dependency>
     </dependencies>
 
