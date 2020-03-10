@@ -1,5 +1,6 @@
 package cn.hyperchain.sdk.common.utils;
 
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
@@ -13,6 +14,7 @@ public class ByteUtil {
 
     /**
      * transfer bytes to hex string.
+     *
      * @param data bytes
      * @return hex string
      */
@@ -22,6 +24,7 @@ public class ByteUtil {
 
     /**
      * transfer hex string to bytes.
+     *
      * @param hex hex string
      * @return bytes
      */
@@ -40,6 +43,7 @@ public class ByteUtil {
 
     /**
      * decode hex string to utf-8 string.
+     *
      * @param hex hex string
      * @return utf-8 string
      */
@@ -49,6 +53,7 @@ public class ByteUtil {
 
     /**
      * transfer short type two bytes.
+     *
      * @param n short value
      * @return two bytes
      */
@@ -58,6 +63,7 @@ public class ByteUtil {
 
     /**
      * transfer int type to four bytes.
+     *
      * @param i int value
      * @return four bytes
      */
@@ -92,7 +98,8 @@ public class ByteUtil {
 
     /**
      * convert BigInteger to signed bytes.
-     * @param b BigInteger
+     *
+     * @param b        BigInteger
      * @param numBytes the desired size
      * @return numBytes byte long array
      */
@@ -159,6 +166,7 @@ public class ByteUtil {
     }
 
     /**
+     * todo this is hex encoded value, but method bytesToInteger is not
      * Cast hex encoded value from byte[] to BigInteger.
      * null is parsed like byte[0]
      *
@@ -167,5 +175,60 @@ public class ByteUtil {
      */
     public static BigInteger bytesToBigInteger(byte[] bb) {
         return (bb == null || bb.length == 0) ? BigInteger.ZERO : new BigInteger(1, bb);
+    }
+
+    /**
+     * Cast byte[] to int.
+     *
+     * @param bytes byte array contains the values
+     * @return int value
+     */
+    public static int bytesToInteger(byte[] bytes) {
+        if (bytes.length > 4) {
+            throw new IndexOutOfBoundsException("int can only load 4 bytes");
+        }
+        int n = 0;
+        int temp = 0;
+        for (byte b : bytes) {
+            n <<= 8;
+            temp = b & 0xFF;
+            n |= temp;
+        }
+        return n;
+    }
+
+    /**
+     * transfer hex string to base64 string.
+     * @param hexOrigin hex string
+     * @return base64 string
+     */
+    public static String hex2Base64(String hexOrigin) {
+        return base64(ByteUtil.fromHex(hexOrigin));
+    }
+
+    /**
+     * encode bytes to base64 string.
+     * @param data bytes
+     * @return base64 string
+     */
+    public static String base64(byte[] data) {
+        return Base64.toBase64String(data);
+    }
+
+    /**
+     * copy some bytes array from offset.
+     *
+     * @param origin origin bytes
+     * @param offset from offset
+     * @param length copy length
+     * @return result
+     */
+    public static byte[] copy(byte[] origin, int offset, int length) {
+        if (origin.length <= offset || origin.length < offset + length) {
+            throw new IndexOutOfBoundsException("the origin array length is " + origin.length);
+        }
+        byte[] newArray = new byte[length];
+        System.arraycopy(origin, offset, newArray, 0, length);
+        return newArray;
     }
 }
