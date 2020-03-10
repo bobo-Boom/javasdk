@@ -24,16 +24,7 @@ public abstract class Request<K extends Response> {
     protected ProviderManager providerManager;
     protected Class<K> clazz;
     protected int[] nodeIds;
-
-    public ProviderManager getProviderManager() {
-        return providerManager;
-    }
-
-    public void setProviderManager(ProviderManager providerManager) {
-        this.providerManager = providerManager;
-    }
-
-    private Gson gson;
+    private static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     // rpc request
     @Expose
     private int id = 1;
@@ -47,7 +38,6 @@ public abstract class Request<K extends Response> {
     private List<Object> params;
 
     Request(String method, ProviderManager providerManager, Class<K> clazz, int... nodeIds) {
-        this.gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         this.clazz = clazz;
         this.providerManager = providerManager;
         this.nodeIds = nodeIds;

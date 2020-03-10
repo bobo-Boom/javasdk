@@ -31,10 +31,6 @@ public class ProviderManager {
     private List<HttpProvider> httpProviders;
     private boolean isCFCA;
     private static Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-    private String token;
-    private String method;
-    private String hash;
-    private String tcertHash;
 
     private ProviderManager() {
     }
@@ -192,9 +188,6 @@ public class ProviderManager {
         String body = request.requestBody();
         byte[] bodyBytes = body.getBytes(Utils.DEFAULT_CHARSET);
         Map<String, String> headers = new HashMap<>();
-        if (this.getToken() != null) {
-            headers.put("token",this.getToken());
-        }
         if (this.tCertPool != null) {
             if (this.isCFCA) {
                 headers.put("tcert", this.tCertPool.getSdkCert());
@@ -208,7 +201,6 @@ public class ProviderManager {
                 headers.put("tcert", tCert);
                 headers.put("signature", this.tCertPool.getUniqueKeyPair().signData(bodyBytes));
             }
-            headers.put("hash",this.getHash());
             headers.put("msg", ByteUtil.toHex(bodyBytes));
         }
 
@@ -224,12 +216,6 @@ public class ProviderManager {
         String body = tCertRequest.requestBody();
         byte[] bodyBytes = body.getBytes(Utils.DEFAULT_CHARSET);
         Map<String, String> headers = new HashMap<>();
-        if (this.getToken() != null) {
-            headers.put("token",this.getToken());
-        }
-        if (this.getTcertHash() != null) {
-            headers.put("hash",this.getTcertHash());
-        }
         headers.put("tcert", sdkCertKeyPair.getPublicKey());
         headers.put("signature", sdkCertKeyPair.signData(bodyBytes));
         headers.put("msg", ByteUtil.toHex(bodyBytes));
@@ -277,37 +263,5 @@ public class ProviderManager {
 
     public boolean isCFCA() {
         return isCFCA;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
-    public String getTcertHash() {
-        return tcertHash;
-    }
-
-    public void setTcertHash(String tcertHash) {
-        this.tcertHash = tcertHash;
     }
 }

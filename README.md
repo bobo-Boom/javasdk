@@ -1,6 +1,5 @@
 # LITESDK
 
-
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Build Status](https://travis-ci.org/hyperchain/javasdk.svg?branch=master)](https://travis-ci.org/hyperchain/javasdk)
 [![Coverage Status](https://coveralls.io/repos/github/hyperchain/javasdk/badge.svg?branch=master)](https://coveralls.io/github/hyperchain/javasdk?branch=master)
@@ -19,14 +18,14 @@ Maven
 <dependency>
     <groupId>cn.hyperchain</groupId>
     <artifactId>litesdk</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.9</version>
 </dependency>
 ```
 
 Gradle
 
 ```
-compile group: 'cn.hyperchain', name: 'litesdk', version: '0.0.3'
+compile group: 'cn.hyperchain', name: 'litesdk', version: '0.0.9'
 ```
 
 ### Usage
