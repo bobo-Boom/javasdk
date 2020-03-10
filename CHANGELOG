@@ -15,3 +15,16 @@ release v0.0.5
 release v0.0.6
     1. change class TxCount access from private to public
     2. refactor(doc): update document
+release v0.0.7
+    1. add method error message into evm transaction builder
+    2. fix invoke directly params process function
+release v0.0.8
+    1. add getBalance interface
+release v0.0.9-dev
+    1. add serialize and deSerialize Transaction
+    2. add read pme file to address
+    3. add node service interface
+    4. fix sendBatchTxs interface
+    5. refactor use of gson creating
+    6. add get tx hash local
+    7. add decode hvm payload function
